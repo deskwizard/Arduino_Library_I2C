@@ -113,19 +113,7 @@ void I2C::setSpeed(uint16_t _speed)
 {
     TWBR = ((F_CPU / (_speed * 1000)) - 16) / 2;
 }
- /*
- void I2C::setSpeed(uint16_t _speed)
-{
-  if(!_fast)
-  {
-    TWBR = ((F_CPU / 100000) - 16) / 2;
-  }
-  else
-  {
-    TWBR = ((F_CPU / 400000) - 16) / 2;
-  }
-}
- */ 
+
 void I2C::pullup(uint8_t activate)
 {
   if(activate)
@@ -163,9 +151,22 @@ void I2C::scan()
   uint16_t tempTime = timeOutDelay;
   timeOut(80);
   uint8_t totalDevicesFound = 0;
-  bool devicesFound[0x80] = {0};
+  bool deviceFound[0x80] = {0};
+  uint16_t _speed = 0;
+  /*
   
-  Serial.println("Scanning for devices... Please wait....");
+  TWBR = ((F_CPU / (_speed * 1000)) - 16) / 2;
+  TWBR * 2 = (F_CPU / (_speed * 1000) - 16);
+  TWBR * 2 + 16 = F_CPU / (_speed * 1000);
+  
+  
+  
+  */
+  
+  //Serial.print(F("Scanning i2c bus @ "));
+  //Serial.print(_speed);
+  //Serial.println(F(" kHz for devices ... Please wait...."));
+  Serial.println(F("Scanning i2c bus for devices ... Please wait...."));
   Serial.println();
   
   for(uint8_t s = 0; s <= 0x7F; s++)
@@ -194,7 +195,7 @@ void I2C::scan()
     else
     {
       Serial.print("*");
-	  devicesFound[s] = 1;
+	  deviceFound[s] = 1;
       totalDevicesFound++;
     }
     stop();
@@ -206,71 +207,7 @@ void I2C::scan()
 	  Serial.println(); Serial.println();
 	  for(uint8_t s = 0; s <= 0x7F; s++)
       {
-		  if (devicesFound[s] == 1) {
-			Serial.print(F("Found device at address - "));
-			Serial.print(F(" 0x"));
-			Serial.println(s,HEX);
-		  }
-	  }  
-	  Serial.println();
-	  Serial.println(F("Device scan finished."));
-  }
-  timeOutDelay = tempTime;
-}
-
-void I2C::scan(uint16_t _speed)
-{
-  uint16_t tempTime = timeOutDelay;
-  timeOut(80);
-  uint8_t totalDevicesFound = 0;
-  bool devicesFound[0x80] = {0};
-  
-  setSpeed(_speed);
-  
-  Serial.print(F("Scanning for devices @ "));
-  Serial.print(_speed);
-  Serial.println(F(" kHz ... Please wait...."));
-  Serial.println();
-  
-  for(uint8_t s = 0; s <= 0x7F; s++)
-  {
-    returnStatus = 0;
-    returnStatus = start();
-    if(!returnStatus)
-    { 
-      returnStatus = sendAddress(SLA_W(s));
-    }
-    if(returnStatus)
-    {
-      if(returnStatus == 1)
-      {
-        Serial.println(F("There is a problem with the bus, could not complete scan"));
-        timeOutDelay = tempTime;
-        return;
-      }
-	  
-	  Serial.print(".");
-	  if (s == 0x3F) {
-		  Serial.println();
-	  }
-	  
-    }
-    else
-    {
-      Serial.print("*");
-	  devicesFound[s] = 1;
-      totalDevicesFound++;
-    }
-    stop();
-  }
-  if(!totalDevicesFound){
-	  Serial.println(F("No devices found"));
-  }
-  else {
-	  Serial.println(); Serial.println();
-	  for(uint8_t s = 0; s <= 0x7F; s++)
-      {
-		  if (devicesFound[s] == 1) {
+		  if (deviceFound[s] == 1) {
 			Serial.print(F("Found device at address - "));
 			Serial.print(F(" 0x"));
 			Serial.println(s,HEX);
