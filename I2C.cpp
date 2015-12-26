@@ -191,7 +191,7 @@ void I2C::scan()
   
   Serial.print(F("Scanning i2c bus @ "));
   Serial.print(_speed);
-  Serial.println(F(" kHz for devices with 10ms timeout... Please wait...."));
+  Serial.println(F(" kHz for devices with 10ms timeout; Please wait...."));
   Serial.println();
   
   _millis = millis();
@@ -208,7 +208,7 @@ void I2C::scan()
     {
       if(returnStatus == 1)
       {
-        Serial.println(F("There is a problem with the bus, could not complete scan"));
+        Serial.println(F("Bus problem detected, could not complete scan"));
         timeOutDelay = tempTime;
         return;
       }
