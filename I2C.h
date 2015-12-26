@@ -64,7 +64,8 @@
 #ifndef I2C_h
 #define I2C_h
 
-
+#define ENABLED 1
+#define DISABLED 0
 #define START           0x08
 #define REPEATED_START  0x10
 #define MT_SLA_ACK	0x18

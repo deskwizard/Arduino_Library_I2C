@@ -121,7 +121,7 @@ void I2C::setSpeed(uint16_t _speed)
 			TWBR = (F_CPU / (_speed * 1000UL) - 16) / 2;
 		break;
 		default:	  
-			TWBR = 32: // 100 khz
+			TWBR = 32; // 100 khz
 		break;
 	}
 }
@@ -191,8 +191,7 @@ void I2C::scan()
   
   Serial.print(F("Scanning i2c bus @ "));
   Serial.print(_speed);
-  Serial.println(F(" kHz for devices ... Please wait...."));
-  //Serial.println(F("Scanning i2c bus for devices ... Please wait...."));
+  Serial.println(F(" kHz for devices with 10ms timeout... Please wait...."));
   Serial.println();
   
   _millis = millis();
@@ -242,9 +241,12 @@ void I2C::scan()
 		  }
 	  }  
 	  Serial.println();
-	  Serial.print(F("Device scan finished (Took "));
+	  Serial.print(F("Device scan finished;  "));
+	  Serial.print(totalDevicesFound);
+	  Serial.print(F(" device(s) found;  Scan took "));
 	  Serial.print(uint32_t(millis() - _millis));
-	  Serial.println(F("ms)."));
+	  Serial.println(F(" milliseconds."));
+	  Serial.println();
   }
   timeOutDelay = tempTime;
 }
