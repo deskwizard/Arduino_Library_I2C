@@ -111,7 +111,19 @@ void I2C::timeOut(uint16_t _timeOut)
 
 void I2C::setSpeed(uint16_t _speed)
 {
-    TWBR = ((F_CPU / (_speed * 1000)) - 16) / 2;
+    switch TWBR {
+		case 72: //  50 khz
+		case 32: // 100 khz
+		case 8:  // 250 khz
+		case 2:  // 400 khz
+		case 0:  // 500 khz
+		case 253:  // 800 khz
+			TWBR = (F_CPU / (_speed * 1000UL) - 16) / 2;
+		break;
+		default:	  
+			TWBR = 32: // 100 khz
+		break;
+	}
 }
 
 void I2C::pullup(uint8_t activate)
@@ -149,25 +161,41 @@ void I2C::pullup(uint8_t activate)
 void I2C::scan()
 {
   uint16_t tempTime = timeOutDelay;
-  timeOut(80);
+  timeOut(10);
   uint8_t totalDevicesFound = 0;
   bool deviceFound[0x80] = {0};
   uint16_t _speed = 0;
-  /*
+  uint32_t _millis;
+
+  switch TWBR {
+	  case 72: //  50 khz
+	  _speed = 50;
+	  break;
+	  case 32: // 100 khz
+	  _speed = 100;
+	  break;
+	  case 8:  // 250 khz
+	  _speed = 250;
+	  break;
+	  case 2:  // 400 khz
+	  _speed = 400;
+	  break;
+	  case 0:  // 500 khz
+	  _speed = 500;
+	  break;
+	  case 253:  // 800 khz
+	  _speed = 800;
+	  break;	  
+  }
   
-  TWBR = ((F_CPU / (_speed * 1000)) - 16) / 2;
-  TWBR * 2 = (F_CPU / (_speed * 1000) - 16);
-  TWBR * 2 + 16 = F_CPU / (_speed * 1000);
   
-  
-  
-  */
-  
-  //Serial.print(F("Scanning i2c bus @ "));
-  //Serial.print(_speed);
-  //Serial.println(F(" kHz for devices ... Please wait...."));
-  Serial.println(F("Scanning i2c bus for devices ... Please wait...."));
+  Serial.print(F("Scanning i2c bus @ "));
+  Serial.print(_speed);
+  Serial.println(F(" kHz for devices ... Please wait...."));
+  //Serial.println(F("Scanning i2c bus for devices ... Please wait...."));
   Serial.println();
+  
+  _millis = millis();
   
   for(uint8_t s = 0; s <= 0x7F; s++)
   {
@@ -214,7 +242,9 @@ void I2C::scan()
 		  }
 	  }  
 	  Serial.println();
-	  Serial.println(F("Device scan finished."));
+	  Serial.print(F("Device scan finished (Took "));
+	  Serial.print(uint32_t(millis() - _millis));
+	  Serial.println(F("ms)."));
   }
   timeOutDelay = tempTime;
 }
