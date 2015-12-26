@@ -17,7 +17,7 @@
   Rev 3.0 - January 9th, 2012
           - Modified library to be compatible with Arduino 1.0
           - Changed argument type from boolean to uint8_t in pullUp(), 
-            setSpeed() and receiveByte() functions for 1.0 compatability
+            setSpeed() and receiveByte() functions for 1.0 compatibility
           - Modified return values for timeout feature to report
             back where in the transmission the timeout occured.
           - added function scan() to perform a bus scan to find devices
