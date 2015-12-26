@@ -94,9 +94,10 @@ class I2C
     void begin();
     void end();
     void timeOut(uint16_t);
-    void setSpeed(uint8_t); 
+    void setSpeed(uint16_t); 
     void pullup(uint8_t);
     void scan();
+	void scan(uint16_t _speed);
     uint8_t available();
     uint8_t receive();
     uint8_t write(uint8_t, uint8_t);
